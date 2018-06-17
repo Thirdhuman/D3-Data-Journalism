@@ -25,7 +25,7 @@ var chartGroup = svg.append("g")
 
 // Initial Params
 var chosenXAxis = "Poverty";
-var chosenYAxis = "Diabetes";
+var chosenYAxis = "Depressed";
 
 ///  Linear Scales 
 
@@ -44,8 +44,8 @@ function xScale(StateData, chosenXAxis) {
 function yScale(StateData, chosenYAxis) {
   // create scales
   var yLinearScale = d3.scaleLinear()
-    .domain([d3.min(StateData, d => d[chosenYAxis]) * 0.2,
-    d3.max(StateData, d => d[chosenYAxis]) * 1
+    .domain([d3.min(StateData, d => d[chosenYAxis]) * .5,
+    d3.max(StateData, d => d[chosenYAxis]) * 1.2
     ])
     .range([0, height]);
 
@@ -211,31 +211,31 @@ d3.csv("data.csv", function (err, StateData) {
   var YlabelsGroup = chartGroup.append("g")
     .attr("transform", `translate(${width + 20}, ${height / 2})`)
     .attr("y", 0 - margin.left)
-    .attr("x", 0 - (height / 2))
+    .attr("x", 1 - (height / 2))
     .attr("transform", "rotate(-90)")
     .attr("dy", "1em");
   var DepressedLabel = YlabelsGroup.append("text")
     .attr("value", "Depressed") // value to grab for event listener
-    .attr("x", -40)
-    .attr("y", 0)
+    .attr("x", -250)
+    .attr("y", -25)
     .classed("active", true)
     .text("Ever Depressed (%)");
   var DiabetesLabel = YlabelsGroup.append("text")
     .attr("value", "Diabetes") // value to grab for event listener
-    .attr("x", -60)
-    .attr("y", 0)
+    .attr("x", -250)
+    .attr("y", -45)
     .classed("inactive", true)
     .text("Diabetes (%)");
   var Internet30Label = YlabelsGroup.append("text")
     .attr("value", "Internet30") // value to grab for event listener
-    .attr("x", -80)
-    .attr("y", 0)
+    .attr("x", -250)
+    .attr("y", -65)
     .classed("inactive", true)
     .text("Internet in last 30 Days (%)");
   var Diff_concentrateLabel = YlabelsGroup.append("text")
     .attr("value", "Diff_concentrate") // value to grab for event listener
-    .attr("x", -100)
-    .attr("y", 0)
+    .attr("x", -250)
+    .attr("y", -85)
     .classed("inactive", true)
     .text("Difficulty Concentrating (%)");
   // updateYToolTip function above csv import
