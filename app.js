@@ -1,5 +1,5 @@
-var svgWidth = 1200;
-var svgHeight = 700;
+var svgWidth = 1160;
+var svgHeight = 800;
 
 var margin = {
   top: 100,
@@ -33,8 +33,8 @@ var chosenYAxis = "Diabetes";
 function xScale(StateData, chosenXAxis) {
   // create scales
   var xLinearScale = d3.scaleLinear()
-    .domain([d3.min(StateData, d => d[chosenXAxis]) * 0.8,
-    d3.max(StateData, d => d[chosenXAxis]) * 1.2
+    .domain([d3.min(StateData, d => d[chosenXAxis]) * 0.2,
+    d3.max(StateData, d => d[chosenXAxis]) * 1
     ])
     .range([0, width]);
 
@@ -44,10 +44,10 @@ function xScale(StateData, chosenXAxis) {
 function yScale(StateData, chosenYAxis) {
   // create scales
   var yLinearScale = d3.scaleLinear()
-    .domain([d3.min(StateData, d => d[chosenYAxis]) * 0.8,
-    d3.max(StateData, d => d[chosenYAxis]) * 1.2
+    .domain([d3.min(StateData, d => d[chosenYAxis]) * 0.2,
+    d3.max(StateData, d => d[chosenYAxis]) * 1
     ])
-    .range([ 0, height,]);
+    .range([0, height]);
 
   return yLinearScale;
 }
@@ -55,7 +55,7 @@ function yScale(StateData, chosenYAxis) {
 ///  AXES 
 
 // function used for updating xAxis var upon click on axis label
-function renderAxes(newXScale, xAxis) {
+function renderXAxes(newXScale, xAxis) {
   var bottomAxis = d3.axisBottom(newXScale);
   xAxis.transition()
     .duration(1000)
@@ -64,7 +64,7 @@ function renderAxes(newXScale, xAxis) {
 }
 // function used for updating circles group with a transition to
 // new circles
-function renderCircles(circlesGroup, newXScale, chosenXaxis) {
+function renderXCircles(circlesGroup, newXScale, chosenXaxis) {
   circlesGroup.transition()
     .duration(1000)
     .attr("cx", d => newXScale(d[chosenXAxis]));
@@ -72,7 +72,7 @@ function renderCircles(circlesGroup, newXScale, chosenXaxis) {
 }
 
 // function used for updating yAxis var upon click on axis label
-function renderAxes(newYScale, yAxis) {
+function renderYAxes(newYScale, yAxis) {
   var leftAxis = d3.axisLeft(newYScale);
   yAxis.transition()
     .duration(1000)
@@ -81,28 +81,22 @@ function renderAxes(newYScale, yAxis) {
 }
 // function used for updating circles group with a transition to
 // new circles y
-function renderCircles(circlesGroup, newYScale, chosenYaxis) {
+function renderYCircles(circlesGroup, newYScale, chosenYaxis) {
   circlesGroup.transition()
     .duration(1000)
     .attr("cy", d => newYScale(d[chosenYAxis]));
   return circlesGroup;
 }
 
-
 // function used for updating circles group with new tooltip
 function updateXToolTip(chosenXAxis, circlesGroup) {
-
-  if (chosenXAxis == "Unemployment") {
-    var xlabel = "Unemployment (%)";
+  if (chosenXAxis == "Unemployment") { var xlabel = "Unemployment (%)";
   }
-  if (chosenXAxis == "Poverty") {
-    var xlabel = "Poverty (%)";
+  if (chosenXAxis == "Poverty") { var xlabel = "Poverty (%)";
   }
-  if (chosenXAxis == "High_school") {
-    var xlabel = "High school Graduate (%)";
+  if (chosenXAxis == "High_school") {var xlabel = "High school Graduate (%)";
   }
-  else {
-    var xlabel = "Bachelor's degree or higher (%)";
+  else { var xlabel = "Bachelor's degree or higher (%)";
   }
 
   var toolTip = d3.tip()
@@ -114,7 +108,7 @@ function updateXToolTip(chosenXAxis, circlesGroup) {
 
   circlesGroup.call(toolTip);
 
-  circlesGroup.on("mouseover", function (data) {
+ circlesGroup.on("mouseover", function (data) {
     toolTip.show(data);
   })
     // onmouseout event
@@ -127,22 +121,18 @@ function updateXToolTip(chosenXAxis, circlesGroup) {
 
 function updateYToolTip(chosenYAxis, circlesGroup) {
 
-  if (chosenYAxis == "Depressed") {
-    var ylabel = "Ever Depressed (%)";
+  if (chosenYAxis == "Depressed") {  var ylabel = "Ever Depressed (%)";
   }
-  if (chosenYAxis == "Diabetes") {
-    var ylabel = "Diabetes (%)";
+  if (chosenYAxis == "Diabetes") {  var ylabel = "Diabetes (%)";
   }
-  if (chosenYAxis == "Internet30") {
-    var ylabel = "Internet in last 30 Days (%)";
+  if (chosenYAxis == "Internet30") {  var ylabel = "Internet in last 30 Days (%)";
   }
-  else {
-    var ylabel = "Difficulty Concentrating (%)";
+  else {  var ylabel = "Difficulty Concentrating (%)";
   }
 
   var toolTip = d3.tip()
     .attr("class", "tooltip")
-    .offset([0, 0])
+    .offset([80, -60])
     .html(function (d) {
       return (`${d.State}<br>${ylabel} ${d[chosenYAxis]}`);
     });
@@ -193,30 +183,29 @@ d3.csv("data.csv", function (err, StateData) {
     .call(bottomAxis);
 
   // append y axis
-  chartGroup.append("g")
+  var yAxis =chartGroup.append("g")
     .classed("y-axis", true)
-    .attr("transform", `translate(${width}, 0)`)
+    .attr("transform", `translate(1-${width}, 0)`)
     .call(leftAxis);
 
-  // append initial circles
   var circlesGroup = chartGroup.selectAll("circle")
     .data(StateData)
     .enter()
     .append("circle")
     .attr("cx", d => xLinearScale(d[chosenXAxis]))
     .attr("cy", d => yLinearScale(d[chosenYAxis]))
-    .attr("r", 20)
+    .attr("r", 15)
     .attr("fill", "green")
     .attr("opacity", ".8");
 
-  // append y axis
-  chartGroup.append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 0 - margin.left)
-    .attr("x", 0 - (height / 2))
-    .attr("dy", "1em")
-    .classed("axis-text", true)
-    .text("");
+  // // append y axis
+  // chartGroup.append("text")
+  //   .attr("transform", "rotate(-90)")
+  //   .attr("y", 0 - margin.left)
+  //   .attr("x", 0 - (height / 2))
+  //   .attr("dy", "1em")
+  //   .classed("axis-text", true)
+  //   .text("");
 
   // Create group for  4 y- axis labels
   var YlabelsGroup = chartGroup.append("g")
@@ -230,30 +219,25 @@ d3.csv("data.csv", function (err, StateData) {
     .attr("x", -40)
     .attr("y", 0)
     .classed("active", true)
-    .classed("axis-text", true)
     .text("Ever Depressed (%)");
   var DiabetesLabel = YlabelsGroup.append("text")
     .attr("value", "Diabetes") // value to grab for event listener
     .attr("x", -60)
     .attr("y", 0)
     .classed("inactive", true)
-    .classed("axis-text", true)
     .text("Diabetes (%)");
   var Internet30Label = YlabelsGroup.append("text")
     .attr("value", "Internet30") // value to grab for event listener
     .attr("x", -80)
     .attr("y", 0)
-    .classed("axis-text", true)
     .classed("inactive", true)
     .text("Internet in last 30 Days (%)");
   var Diff_concentrateLabel = YlabelsGroup.append("text")
     .attr("value", "Diff_concentrate") // value to grab for event listener
     .attr("x", -100)
     .attr("y", 0)
-    .classed("axis-text", true)
     .classed("inactive", true)
     .text("Difficulty Concentrating (%)");
-
   // updateYToolTip function above csv import
   var circlesGroup = updateYToolTip(chosenYAxis, circlesGroup);
 
@@ -284,7 +268,6 @@ d3.csv("data.csv", function (err, StateData) {
     .attr("value", "College") // value to grab for event listener
     .classed("inactive", true)
     .text("Bachelor's degree or higher (%)");
-
   // updateXToolTip function above csv import
   var circlesGroup = updateXToolTip(chosenXAxis, circlesGroup);
 
@@ -299,11 +282,11 @@ d3.csv("data.csv", function (err, StateData) {
         console.log(chosenYAxis)
         // functions here found above csv import
         // updates y scale for new data
-        yLinearScale = YScale(StateData, chosenYAxis);
+        yLinearScale = yScale(StateData, chosenYAxis);
         // updates y axis with transition
-        YAxis = renderAxes(yLinearScale, YAxis);
+        yAxis = renderYAxes(yLinearScale, yAxis);
         // updates circles with new y values
-        circlesGroup = renderCircles(circlesGroup, yLinearScale, chosenYAxis);
+        circlesGroup = renderYCircles(circlesGroup, yLinearScale, chosenYAxis);
         // updates tooltips with new info
         circlesGroup = updateYToolTip(chosenYAxis, circlesGroup);
         // changes classes to change bold text
@@ -379,9 +362,9 @@ d3.csv("data.csv", function (err, StateData) {
         // updates x scale for new data
         xLinearScale = xScale(StateData, chosenXAxis);
         // updates x axis with transition
-        xAxis = renderAxes(xLinearScale, xAxis);
+        xAxis = renderXAxes(xLinearScale, xAxis);
         // updates circles with new x values
-        circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis);
+        circlesGroup = renderXCircles(circlesGroup, xLinearScale, chosenXAxis);
         // updates tooltips with new info
         circlesGroup = updateXToolTip(chosenXAxis, circlesGroup);
         // changes classes to change bold text
