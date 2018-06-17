@@ -1,0 +1,10 @@
+Y = Depressed,Diabetes,Internet30,Diff_concentrate,
+
+X = Unemployment,Poverty,High_school,College
+
+
+Y = Ever Depressed (%)	Diabetes (%)	Internet in last 30 Days (%)	Difficulty Concentrating (%)	
+
+X = Unemployment (%)	Poverty (%)	High school Graduate (%)	Bachelor's degree or higher (%)
+
+State
