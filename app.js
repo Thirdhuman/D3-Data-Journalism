@@ -27,7 +27,7 @@ var chartGroup = svg.append("g")
 var chosenXAxis = "Poverty";
 var chosenYAxis = "Depressed";
 
-///  Linear Scales 
+///  Linear Scales ///
 
 // function used for updating x-scale var upon click on axis label
 function xScale(StateData, chosenXAxis) {
@@ -48,7 +48,6 @@ function yScale(StateData, chosenYAxis) {
     d3.max(StateData, d => d[chosenYAxis]) * 1.2
     ])
     .range([0, height]);
-
   return yLinearScale;
 }
 
@@ -89,7 +88,7 @@ function renderYCircles(circlesGroup, newYScale, chosenYaxis) {
 }
 
 // function used for updating circles group with new tooltip
-function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
+function updateToolTip(chosenYAxis, chosenXAxis, circlesGroup) {
   if (chosenXAxis == "Unemployment") {
     var xlabel = "Unemployment (%)";
   }
@@ -99,7 +98,7 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
   if (chosenXAxis == "High_school") {
     var xlabel = "High school Graduate (%)";
   }
-  else {
+  if (chosenXAxis == "College") {
     var xlabel = "Bachelor's degree or higher (%)";
   }
 
@@ -112,7 +111,7 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
   if (chosenYAxis == "Internet30") {
     var ylabel = "Internet in last 30 Days (%)";
   }
-  else {
+  if (chosenYAxis == "Diff_concentrate") {
     var ylabel = "Difficulty Concentrating (%)";
   }
 
@@ -120,7 +119,8 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
     .attr("class", "tooltip")
     .offset([100, -80])
     .html(function (d) {
-      return (`${d.State}<br>${xlabel} ${d[chosenXAxis]}<br> ${ylabel}  ${d[chosenYAxis]})`);
+     var stateName = d.State;
+      return (`${stateName}<br>${d[chosenXAxis]} ${xlabel}<br>${d[chosenYAxis]} ${ylabel})`);
     });
 
   circlesGroup.call(toolTip);
@@ -142,7 +142,7 @@ d3.csv("data.csv", function (err, StateData) {
 
   // parse data
   StateData.forEach(function (data) {
-    data.State = +data.State;
+    data.State = data.State;
     data.Unemployment = +data.Unemployment;
     data.Poverty = +data.Poverty;
     data.High_school = +data.High_school;
@@ -171,7 +171,7 @@ d3.csv("data.csv", function (err, StateData) {
   // append y axis
   var yAxis = chartGroup.append("g")
     .classed("y-axis", true)
-    .attr("transform", `translate(1-${width}, 0)`)
+    .attr("transform", `translate(${width}, 0)`)
     .call(leftAxis);
 
   var circlesGroup = chartGroup.selectAll("circle")
@@ -196,24 +196,28 @@ d3.csv("data.csv", function (err, StateData) {
     .attr("value", "Depressed") // value to grab for event listener
     .attr("x", -250)
     .attr("y", -25)
-    .classed("inactive", true)
+    .classed("active", true)
+    .classed("inactive", false)
     .text("Ever Depressed (%)");
   var DiabetesLabel = ylabelsGroup.append("text")
     .attr("value", "Diabetes") // value to grab for event listener
     .attr("x", -250)
     .attr("y", -45)
+    .classed("active", false)
     .classed("inactive", true)
     .text("Diabetes (%)");
   var Internet30Label = ylabelsGroup.append("text")
     .attr("value", "Internet30") // value to grab for event listener
     .attr("x", -250)
     .attr("y", -65)
+    .classed("active", false)
     .classed("inactive", true)
     .text("Internet in last 30 Days (%)");
   var Diff_concentrateLabel = ylabelsGroup.append("text")
     .attr("value", "Diff_concentrate") // value to grab for event listener
     .attr("x", -250)
     .attr("y", -85)
+    .classed("active", false)
     .classed("inactive", true)
     .text("Difficulty Concentrating (%)");
 
@@ -222,39 +226,42 @@ d3.csv("data.csv", function (err, StateData) {
     .attr("transform", `translate(${width / 2}, ${height + 20})`)
     .attr("dx", "1em")
     .classed("axis-text", true);
-
   var PovertyLabel = xlabelsGroup.append("text")
     .attr("x", 0)
     .attr("y", 20)
     .attr("value", "Poverty") // value to grab for event listener
-    .classed("inactive", true)
+    .classed("active", true)
+    .classed("inactive", false)
     .text("Poverty (%)");
   var UnemploymentLabel = xlabelsGroup.append("text")
     .attr("x", 0)
     .attr("y", 40)
     .attr("value", "Unemployment") // value to grab for event listener
+    .classed("active", false)
     .classed("inactive", true)
     .text("Unemployment (%)");
   var High_schoolLabel = xlabelsGroup.append("text")
     .attr("x", 0)
     .attr("y", 60)
     .attr("value", "High_school") // value to grab for event listener
+    .classed("active", false)
     .classed("inactive", true)
     .text("High school Graduate (%)");
   var CollegeLabel = xlabelsGroup.append("text")
     .attr("x", 0)
     .attr("y", 80)
     .attr("value", "College") // value to grab for event listener
+    .classed("active", false)
     .classed("inactive", true)
     .text("Bachelor's degree or higher (%)");
   // updateXToolTip function above csv import
-  var circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
+  var circlesGroup = updateToolTip(chosenYAxis ,chosenXAxis, circlesGroup);
   // Y axis labels event listener
   ylabelsGroup.selectAll("text")
     .on("click", function () {
       // get value of selection
       var value = d3.select(this).attr("value");
-      if (value != chosenYAxis && value != chosenXAxis) {
+      if (value != chosenYAxis) {
         // replaces chosenXAxis with value
         chosenYAxis = value;
         console.log(chosenYAxis)
@@ -265,7 +272,7 @@ d3.csv("data.csv", function (err, StateData) {
         // updates circles with new y values
         circlesGroup = renderYCircles(circlesGroup, yLinearScale, chosenYAxis);
         // updates tooltips with new info
-        circlesGroup = updateToolTip(chosenYAxis, circlesGroup);
+        circlesGroup = updateToolTip(chosenYAxis, chosenXAxis, circlesGroup);
         // changes classes to change bold text
         if (chosenYAxis == "Diabetes") {
           DiabetesLabel
@@ -325,80 +332,80 @@ d3.csv("data.csv", function (err, StateData) {
         }
       }
     });
-    xlabelsGroup.selectAll("text")
-        .on("click", function () {
-          // get value of selection
-          var value = d3.select(this).attr("value");
-          if (value != chosenXAxis && value != chosenYAxis) {
-            // replaces chosenXAxis with value
-            chosenXAxis = value;
-            console.log(chosenXAxis)
-            // functions here found above csv import
-            // updates x scale for new data
-            xLinearScale = xScale(StateData, chosenXAxis);
-            // updates x axis with transition
-            xAxis = renderXAxes(xLinearScale, xAxis);
-            // updates circles with new x values
-            circlesGroup = renderXCircles(circlesGroup, xLinearScale, chosenXAxis);
-            // updates tooltips with new info
-            circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
-            // changes classes to change bold text
-            if (chosenXAxis == "Unemployment") {
-              UnemploymentLabel
-                .classed("active", true)
-                .classed("inactive", false);
-              PovertyLabel
-                .classed("active", false)
-                .classed("inactive", true);
-              High_schoolLabel
-                .classed("active", false)
-                .classed("inactive", true);
-              CollegeLabel
-                .classed("active", false)
-                .classed("inactive", true);
-            }
-            if (chosenXAxis == "High_school") {
-              High_schoolLabel
-                .classed("active", true)
-                .classed("inactive", false);
-              PovertyLabel
-                .classed("active", false)
-                .classed("inactive", true);
-              UnemploymentLabel
-                .classed("active", false)
-                .classed("inactive", true);
-              CollegeLabel
-                .classed("active", false)
-                .classed("inactive", true);
-            }
-            if (chosenXAxis == "College") {
-              High_schoolLabel
-                .classed("active", false)
-                .classed("inactive", false);
-              PovertyLabel
-                .classed("active", false)
-                .classed("inactive", true);
-              UnemploymentLabel
-                .classed("active", false)
-                .classed("inactive", true);
-              CollegeLabel
-                .classed("active", true)
-                .classed("inactive", true);
-            }
-            else {
-              PovertyLabel
-                .classed("active", true)
-                .classed("inactive", false);
-              UnemploymentLabel
-                .classed("active", false)
-                .classed("inactive", true);
-              High_schoolLabel
-                .classed("active", false)
-                .classed("inactive", true);
-              CollegeLabel
-                .classed("active", false)
-                .classed("inactive", true);
-            }
-          }
-        });
+  xlabelsGroup.selectAll("text")
+    .on("click", function () {
+      // get value of selection
+      var value = d3.select(this).attr("value");
+      if (value != chosenXAxis) {
+        // replaces chosenXAxis with value
+        chosenXAxis = value;
+        console.log(chosenXAxis)
+        // functions here found above csv import
+        // updates x scale for new data
+        xLinearScale = xScale(StateData, chosenXAxis);
+        // updates x axis with transition
+        xAxis = renderXAxes(xLinearScale, xAxis);
+        // updates circles with new x values
+        circlesGroup = renderXCircles(circlesGroup, xLinearScale, chosenXAxis);
+        // updates tooltips with new info
+        circlesGroup = updateToolTip(chosenYAxis, chosenXAxis, circlesGroup);
+        // changes classes to change bold text
+        if (chosenXAxis == "Unemployment") {
+          UnemploymentLabel
+            .classed("active", true)
+            .classed("inactive", false);
+          PovertyLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          High_schoolLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          CollegeLabel
+            .classed("active", false)
+            .classed("inactive", true);
+        }
+        if (chosenXAxis == "High_school") {
+          High_schoolLabel
+            .classed("active", true)
+            .classed("inactive", false);
+          PovertyLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          UnemploymentLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          CollegeLabel
+            .classed("active", false)
+            .classed("inactive", true);
+        }
+        if (chosenXAxis == "College") {
+          High_schoolLabel
+            .classed("active", false)
+            .classed("inactive", false);
+          PovertyLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          UnemploymentLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          CollegeLabel
+            .classed("active", true)
+            .classed("inactive", true);
+        }
+        else {
+          PovertyLabel
+            .classed("active", true)
+            .classed("inactive", false);
+          UnemploymentLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          High_schoolLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          CollegeLabel
+            .classed("active", false)
+            .classed("inactive", true);
+        }
+      }
     });
+});
