@@ -146,7 +146,6 @@ function updateYToolTip(chosenYAxis, circlesGroup) {
     .on("mouseout", function (data, index) {
       toolTip.hide(data);
     });
-
   return circlesGroup;
 }
 
@@ -198,15 +197,6 @@ d3.csv("data.csv", function (err, StateData) {
     .attr("fill", "green")
     .attr("opacity", ".8");
 
-  // // append y axis
-  // chartGroup.append("text")
-  //   .attr("transform", "rotate(-90)")
-  //   .attr("y", 0 - margin.left)
-  //   .attr("x", 0 - (height / 2))
-  //   .attr("dy", "1em")
-  //   .classed("axis-text", true)
-  //   .text("");
-
   // Create group for  4 y- axis labels
   var YlabelsGroup = chartGroup.append("g")
     .attr("transform", `translate(${width + 20}, ${height / 2})`)
@@ -243,7 +233,8 @@ d3.csv("data.csv", function (err, StateData) {
 
   // Create group for  4 x- axis labels
   var XlabelsGroup = chartGroup.append("g")
-    .attr("transform", `translate(${width / 2}, ${height + 20})`);
+    .attr("transform", `translate(${width / 2}, ${height + 20})`)
+    .attr("dx", "1em");
   var PovertyLabel = XlabelsGroup.append("text")
     .attr("x", 0)
     .attr("y", 20)
@@ -339,7 +330,7 @@ d3.csv("data.csv", function (err, StateData) {
           Internet30Label
             .classed("active", false)
             .classed("inactive", true);
-          Diabetes
+          DiabetesLabel
             .classed("active", false)
             .classed("inactive", true);
           Diff_concentrateLabel
