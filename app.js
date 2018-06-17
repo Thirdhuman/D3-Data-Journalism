@@ -1,10 +1,10 @@
-var svgWidth = 960;
-var svgHeight = 500;
+var svgWidth = 1200;
+var svgHeight = 700;
 
 var margin = {
-  top: 20,
+  top: 100,
   right: 100,
-  bottom:120,
+  bottom: 120,
   left: 120
 };
 
@@ -47,58 +47,46 @@ function yScale(StateData, chosenYAxis) {
     .domain([d3.min(StateData, d => d[chosenYAxis]) * 0.8,
     d3.max(StateData, d => d[chosenYAxis]) * 1.2
     ])
-    .range([height, 0]);
+    .range([ 0, height,]);
 
   return yLinearScale;
 }
 
-///  AXIS 
+///  AXES 
 
 // function used for updating xAxis var upon click on axis label
 function renderAxes(newXScale, xAxis) {
   var bottomAxis = d3.axisBottom(newXScale);
-
   xAxis.transition()
     .duration(1000)
     .call(bottomAxis);
-
   return xAxis;
 }
 // function used for updating circles group with a transition to
 // new circles
-
 function renderCircles(circlesGroup, newXScale, chosenXaxis) {
-
   circlesGroup.transition()
     .duration(1000)
     .attr("cx", d => newXScale(d[chosenXAxis]));
-
   return circlesGroup;
 }
-
 
 // function used for updating yAxis var upon click on axis label
 function renderAxes(newYScale, yAxis) {
   var leftAxis = d3.axisLeft(newYScale);
-
   yAxis.transition()
     .duration(1000)
     .call(leftAxis);
-
   return yAxis;
 }
 // function used for updating circles group with a transition to
 // new circles y
 function renderCircles(circlesGroup, newYScale, chosenYaxis) {
-
   circlesGroup.transition()
     .duration(1000)
     .attr("cy", d => newYScale(d[chosenYAxis]));
-
   return circlesGroup;
 }
-
-
 
 
 // function used for updating circles group with new tooltip
@@ -218,44 +206,52 @@ d3.csv("data.csv", function (err, StateData) {
     .attr("cx", d => xLinearScale(d[chosenXAxis]))
     .attr("cy", d => yLinearScale(d[chosenYAxis]))
     .attr("r", 20)
-    .attr("fill", "pink")
-    .attr("opacity", ".5");
+    .attr("fill", "green")
+    .attr("opacity", ".8");
 
   // append y axis
-  // chartGroup.append("text")
-  //   .attr("transform", "rotate(-90)")
-  //   .attr("y", 0 - margin.left)
-  //   .attr("x", 0 - (height / 2))
-  //   .attr("dy", "1em")
-  //   .classed("axis-text", true)
-  //   .text("");
+  chartGroup.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 0 - margin.left)
+    .attr("x", 0 - (height / 2))
+    .attr("dy", "1em")
+    .classed("axis-text", true)
+    .text("");
 
   // Create group for  4 y- axis labels
   var YlabelsGroup = chartGroup.append("g")
     .attr("transform", `translate(${width + 20}, ${height / 2})`)
-    .attr("transform", "rotate(-90)")
     .attr("y", 0 - margin.left)
     .attr("x", 0 - (height / 2))
+    .attr("transform", "rotate(-90)")
     .attr("dy", "1em");
   var DepressedLabel = YlabelsGroup.append("text")
-    .attr("transform", "rotate(-90)")
     .attr("value", "Depressed") // value to grab for event listener
+    .attr("x", -40)
+    .attr("y", 0)
+    .classed("active", true)
     .classed("axis-text", true)
     .text("Ever Depressed (%)");
   var DiabetesLabel = YlabelsGroup.append("text")
-    .attr("transform", "rotate(-90)")
     .attr("value", "Diabetes") // value to grab for event listener
+    .attr("x", -60)
+    .attr("y", 0)
+    .classed("inactive", true)
     .classed("axis-text", true)
     .text("Diabetes (%)");
   var Internet30Label = YlabelsGroup.append("text")
-    .attr("transform", "rotate(-90)")
     .attr("value", "Internet30") // value to grab for event listener
+    .attr("x", -80)
+    .attr("y", 0)
     .classed("axis-text", true)
+    .classed("inactive", true)
     .text("Internet in last 30 Days (%)");
   var Diff_concentrateLabel = YlabelsGroup.append("text")
-    .attr("transform", "rotate(-90)")
     .attr("value", "Diff_concentrate") // value to grab for event listener
+    .attr("x", -100)
+    .attr("y", 0)
     .classed("axis-text", true)
+    .classed("inactive", true)
     .text("Difficulty Concentrating (%)");
 
   // updateYToolTip function above csv import
@@ -264,7 +260,6 @@ d3.csv("data.csv", function (err, StateData) {
   // Create group for  4 x- axis labels
   var XlabelsGroup = chartGroup.append("g")
     .attr("transform", `translate(${width / 2}, ${height + 20})`);
-    
   var PovertyLabel = XlabelsGroup.append("text")
     .attr("x", 0)
     .attr("y", 20)
@@ -310,7 +305,7 @@ d3.csv("data.csv", function (err, StateData) {
         // updates circles with new y values
         circlesGroup = renderCircles(circlesGroup, yLinearScale, chosenYAxis);
         // updates tooltips with new info
-        circlesGroup = updateToolTip(chosenYAxis, circlesGroup);
+        circlesGroup = updateYToolTip(chosenYAxis, circlesGroup);
         // changes classes to change bold text
         if (chosenYAxis == "Diabetes") {
           DiabetesLabel
@@ -361,7 +356,7 @@ d3.csv("data.csv", function (err, StateData) {
           Internet30Label
             .classed("active", false)
             .classed("inactive", true);
-          High_schoolLabel
+          Diabetes
             .classed("active", false)
             .classed("inactive", true);
           Diff_concentrateLabel
@@ -388,7 +383,7 @@ d3.csv("data.csv", function (err, StateData) {
         // updates circles with new x values
         circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis);
         // updates tooltips with new info
-        circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+        circlesGroup = updateXToolTip(chosenXAxis, circlesGroup);
         // changes classes to change bold text
         if (chosenXAxis == "Unemployment") {
           UnemploymentLabel
