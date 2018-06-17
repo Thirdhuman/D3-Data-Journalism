@@ -316,7 +316,7 @@ d3.csv("data.csv", function (err, StateData) {
             .classed("active", false)
             .classed("inactive", true);
         }
-        else {
+        if (chosenYAxis == "Depressed") {
           DepressedLabel
             .classed("active", true)
             .classed("inactive", false);
@@ -379,20 +379,20 @@ d3.csv("data.csv", function (err, StateData) {
             .classed("inactive", true);
         }
         if (chosenXAxis == "College") {
+          CollegeLabel
+          .classed("active", true)
+          .classed("inactive", false);
           High_schoolLabel
             .classed("active", false)
-            .classed("inactive", false);
+            .classed("inactive", true);
           PovertyLabel
             .classed("active", false)
             .classed("inactive", true);
           UnemploymentLabel
             .classed("active", false)
             .classed("inactive", true);
-          CollegeLabel
-            .classed("active", true)
-            .classed("inactive", true);
         }
-        else {
+        if (chosenXAxis == "Poverty") {
           PovertyLabel
             .classed("active", true)
             .classed("inactive", false);
