@@ -171,7 +171,7 @@ d3.csv("data.csv", function (err, StateData) {
   // append y axis
   var yAxis = chartGroup.append("g")
     .classed("y-axis", true)
-    .attr("transform", `translate(${width}, 0)`)
+    .attr("transform", `translate(1-${width}, 0)`)
     .call(leftAxis);
 
   var circlesGroup = chartGroup.selectAll("circle")
